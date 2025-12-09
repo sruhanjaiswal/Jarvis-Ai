@@ -1,0 +1,172 @@
+<!DOCTYPE html>
+<html>
+<head>
+<meta charset="UTF-8">
+<title>JARVIS SYSTEM</title>
+<style>
+    body {
+        background: black;
+        font-family: Consolas, monospace;
+        color: #00ffea;
+        margin: 0;
+        padding: 0;
+        overflow: hidden;
+    }
+
+    .center {
+        text-align: center;
+        margin-top: 100px;
+    }
+
+    #passwordBox {
+        background: rgba(0, 255, 255, 0.1);
+        border: 1px solid #00ffff;
+        color: #00ffff;
+        padding: 10px;
+        width: 250px;
+        font-size: 20px;
+        outline: none;
+        text-align: center;
+    }
+
+    .btn {
+        background: none;
+        border: 1px solid #00ffff;
+        color: #00ffff;
+        padding: 10px 25px;
+        margin-top: 10px;
+        cursor: pointer;
+        font-size: 16px;
+    }
+
+    .btn:hover {
+        background: #00ffff;
+        color: black;
+    }
+
+    #terminal {
+        display: none;
+        padding: 20px;
+        height: 90vh;
+        overflow-y: auto;
+        border-top: 2px solid #00ffc8;
+        animation: fadeIn 1s ease forwards;
+    }
+
+    @keyframes fadeIn {
+        from { opacity: 0; }
+        to { opacity: 1; }
+    }
+
+    .glow {
+        animation: glowAnim 1s infinite alternate;
+    }
+
+    @keyframes glowAnim {
+        from { text-shadow: 0 0 5px #00ffff; }
+        to { text-shadow: 0 0 20px #00ffff; }
+    }
+
+    #commandInput {
+        width: 90%;
+        margin-top: 15px;
+        padding: 10px;
+        background: black;
+        border: 1px solid #00ffff;
+        color: #00ffff;
+        font-size: 18px;
+    }
+</style>
+</head>
+<body>
+
+<div id="login" class="center">
+    <h1 class="glow">JARVIS SYSTEM LOGIN</h1>
+    <input type="password" id="passwordBox" placeholder="ENTER PASSWORD">
+    <br>
+    <button class="btn" onclick="checkPass()">ENTER</button>
+    <p id="message"></p>
+</div>
+
+<div id="terminal">
+    <h2 class="glow">ACCESS GRANTED ✔</h2>
+    <pre id="screen"></pre>
+
+    <input id="commandInput" placeholder="Type a command (calculator, help, clear, etc.)">
+</div>
+
+<script>
+const correctPassword = "jarvis123";  // change this if you want!
+
+function typeWriter(text, speed = 40) {
+    let i = 0;
+    let output = "";
+    const screen = document.getElementById("screen");
+
+    let interval = setInterval(() => {
+        output += text[i];
+        screen.textContent = output;
+        i++;
+        if (i >= text.length) clearInterval(interval);
+    }, speed);
+}
+
+function checkPass() {
+    let p = document.getElementById("passwordBox").value;
+    let msg = document.getElementById("message");
+
+    if (p === correctPassword) {
+        msg.style.color = "#00ffea";
+        msg.textContent = "ACCESS GRANTED";
+        setTimeout(() => {
+            document.getElementById("login").style.display = "none";
+            document.getElementById("terminal").style.display = "block";
+            typeWriter("BOOTING SYSTEM...\nLOADING MODULES...\nACCESS LEVEL: ADMIN...\nREADY.\n\nType 'help' for commands.\n");
+        }, 500);
+    } else {
+        msg.style.color = "red";
+        msg.textContent = "ACCESS DENIED ❌";
+    }
+}
+
+const input = document.getElementById("commandInput");
+input.addEventListener("keydown", function(e) {
+    if (e.key === "Enter") {
+        handleCommand(input.value.toLowerCase());
+        input.value = "";
+    }
+});
+
+function handleCommand(cmd) {
+    if (cmd === "help") {
+        typeWriter("\nCommands:\n• calculator\n• clear\n• info\n• joke\n• time\n\n");
+    }
+    else if (cmd === "calculator") {
+        let calc = prompt("Enter math (example: 5*5+2)");
+        try {
+            let result = eval(calc);
+            typeWriter(`\nCalculator Result: ${result}\n`);
+        } catch {
+            typeWriter("\nInvalid Expression.\n");
+        }
+    }
+    else if (cmd === "clear") {
+        document.getElementById("screen").textContent = "";
+    }
+    else if (cmd === "info") {
+        typeWriter("\nJARVIS ONLINE.\nStatus: Stable.\nSystems: Operational.\n");
+    }
+    else if (cmd === "joke") {
+        typeWriter("\nWhy did the computer get cold?\nBecause it forgot to close Windows.\n");
+    }
+    else if (cmd === "time") {
+        typeWriter("\nCurrent Time: " + new Date().toLocaleTimeString() + "\n");
+    }
+    else {
+        typeWriter(`\nUnknown command: ${cmd}\n`);
+    }
+}
+</script>
+
+</body>
+</html>
