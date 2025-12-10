@@ -95,7 +95,11 @@
     <input id="commandInput" placeholder="Type a command (calculator, help, clear, etc.)">
 </div>
 
+<!-- Add audio -->
+<audio id="denied-sound" src="accessdenied.mp3"></audio>
+
 <script>
+const deniedSound = document.getElementById("denied-sound");
 const correctPassword = "jarvis123";  // change this if you want!
 
 function typeWriter(text, speed = 40) {
@@ -126,6 +130,7 @@ function checkPass() {
     } else {
         msg.style.color = "red";
         msg.textContent = "ACCESS DENIED ❌";
+        deniedSound.play(); // <-- plays the sound
     }
 }
 
