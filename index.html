@@ -1,52 +1,40 @@
-<!-- ===== Chat Bot Section ===== -->
-<section id="chatbot-section">
-    <h2>Chat Bot</h2>
+<section>
+<h2>🤖 AI Chat + Coding Assistant</h2>
 
-    <div id="chat-box" style="border:1px solid #ccc; height:300px; overflow-y:auto; padding:10px; margin-bottom:10px;">
-    </div>
+<div id="aiChatBox" style="height:300px; border:1px solid #ccc; overflow-y:auto; padding:10px;"></div>
 
-    <input id="user-input" type="text" placeholder="Type your message..." style="width:80%; padding:8px;">
-    <button onclick="sendMessage()">Send</button>
+<input id="aiInput" placeholder="Ask AI or ask coding help..." style="width:80%; padding:8px;">
+<button onclick="askAI()">Send</button>
 </section>
 
 <script>
-const apiKey = "PUT_YOUR_OPENAI_API_KEY_HERE";
+const OPENAI_KEY = "PUT_YOUR_API_KEY_HERE";
 
-// Add message to chat UI
-function addMessage(text, sender){
-    const chatBox = document.getElementById("chat-box");
-    const msg = document.createElement("div");
-    msg.innerText = sender + ": " + text;
-    chatBox.appendChild(msg);
-    chatBox.scrollTop = chatBox.scrollHeight;
-}
-
-// Send message to ChatGPT API
-async function sendMessage(){
-    const input = document.getElementById("user-input");
+async function askAI(){
+    const input = document.getElementById("aiInput");
     const message = input.value;
     if(!message) return;
 
-    addMessage(message, "You");
+    addAIMessage("You: " + message);
     input.value = "";
 
-    // Example: Check if user is asking about weather
-    if(message.toLowerCase().includes("weather")){
-        getWeather();
-        return;
-    }
-
-    // ChatGPT API Call
-    const response = await fetch("https://api.openai.com/v1/chat/completions", {
-        method: "POST",
-        headers: {
-            "Content-Type": "application/json",
-            "Authorization": "Bearer " + apiKey
+    const response = await fetch("https://api.openai.com/v1/chat/completions",{
+        method:"POST",
+        headers:{
+            "Content-Type":"application/json",
+            "Authorization":"Bearer " + OPENAI_KEY
         },
-        body: JSON.stringify({
-            model: "gpt-3.5-turbo",
-            messages: [
-                { role: "user", content: message }
+        body:JSON.stringify({
+            model:"gpt-4-turbo",
+            messages:[
+                {
+                    role:"system",
+                    content:"You are a helpful AI coding and general assistant."
+                },
+                {
+                    role:"user",
+                    content:message
+                }
             ]
         })
     });
@@ -54,23 +42,14 @@ async function sendMessage(){
     const data = await response.json();
     const reply = data.choices[0].message.content;
 
-    addMessage(reply, "Bot");
+    addAIMessage("AI: " + reply);
 }
 
-// Weather API Example
-async function getWeather(){
-    const city = "Fishers";
-    const weatherKey = "PUT_YOUR_WEATHER_API_KEY";
-
-    const res = await fetch(
-        `https://api.openweathermap.org/data/2.5/weather?q=${city}&appid=${weatherKey}&units=imperial`
-    );
-
-    const data = await res.json();
-
-    const temp = data.main.temp;
-    const description = data.weather[0].description;
-
-    addMessage(`Weather in ${city}: ${temp}°F and ${description}`, "Weather Bot");
+function addAIMessage(text){
+    const box = document.getElementById("aiChatBox");
+    const div = document.createElement("div");
+    div.innerText = text;
+    box.appendChild(div);
+    box.scrollTop = box.scrollHeight;
 }
 </script>
